@@ -7,6 +7,7 @@ Created on Fri Apr 28 09:07:55 2023
 import numpy as np; np.random.seed(1)
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from scipy.stats import lognorm
 from scipy.stats import chi2
 
 
@@ -63,11 +64,9 @@ def merge_bins(counts, bins, th = 5, flip = False):
     # return new_counts, new_bins
 
 
-def compute_chi2(bins, counts, mu = 0, std = 1):
+def compute_chi2(bins, counts, rand_var):
     # compute theretical frequencies for all bins
-    gauss = norm(loc = 0, scale = 1)
-    th = counts.sum()*np.array([gauss.cdf(k[1]) - gauss.cdf(k[0]) for k in bins])
-    
+    th = counts.sum()*np.array([rand_var.cdf(k[1]) - rand_var.cdf(k[0]) for k in bins])
     return (((counts - th)**2)/th).sum()
 
 
@@ -99,23 +98,145 @@ def my_chi2(signif, bins, est_params = 0):
     return chi2.ppf([confidence], dof)[0]
 
 
-# This function will be deprecated
-# def gauss(x, mu, std):
-#     return np.exp(-0.5*(((x-mu)/std)**2))/((np.pi*2*(std**2))**0.5)
+def build_rv(mu = 0, std = 1, s_log = 1, family = 'norm'):
+    if family == 'norm':
+        return norm(loc = mu, scale = std)
+    elif family == 'lognorm':
+        return lognorm(s = s_log, loc = mu, scale = std)
+    else:
+        raise NotImplementedError
 
 
+def cat_sx_dx(sx, dx):
+    if sx.shape[0] == 0:
+        return dx
+    elif dx.shape[0] == 0:
+        return sx
+    elif sx.shape[0] != 0 and dx.shape[0] != 0:
+        return np.concatenate([sx, dx])
+    else:
+        raise Exception('There must be something wrong with sampling')
 
+
+def generate_sample(rv, size = 1000, n_bins = 10, plot = False):
+    
+    # sample the random variable
+    x = rv.rvs(size = ss)
+    
+    if plot:
+        plt.figure(dpi = 300)
+        plt.hist(x, bins = b, histtype='step', color = 'red')
+        plt.title('Absolute Frequency')
+        
+        plt.figure(dpi = 300)
+        plt.hist(x, bins = b, histtype='step', color = 'red', density=True)
+        x_coord = np.linspace(x.min(), x.max(), 1000)
+        plt.plot(x_coord, rv.pdf(x_coord), 'k')
+        plt.title('Relative Frequency')
+    return x
+
+
+def recompute_histogram(sample, n_bins = 10, th = 5, plot=True, c_log=True):
+    
+    # original histogram of the sample
+    counts, x_bins = np.histogram(sample, bins=n_bins)
+    
+    # find a more convenient representation of bins
+    bins = unravel_bins(x_bins)
+    
+    # find the index of the mode
+    id_max = list(counts).index(counts.max())
+    
+    # split data wrt the mode of the distribution
+    sx_bins = bins[None:id_max,:]
+    dx_bins = bins[id_max:None,:]
+    sx_counts = counts[None:id_max]
+    dx_counts = counts[id_max:None]
+    
+    # on the left
+    sx_new_counts, sx_new_bins = merge_bins(sx_counts, sx_bins, th = th)
+    # on the right -- watch out: flip the array
+    dx_new_counts, dx_new_bins = merge_bins(dx_counts, dx_bins, th = th, flip = True)
+    
+    # join new counts and bins
+    new_counts = cat_sx_dx(sx_new_counts, dx_new_counts)
+    new_bins = cat_sx_dx(sx_new_bins, dx_new_bins)
+    
+    # in order to plot take the edges of the distribution
+    new_edges = np.array([new_bins[0,0]] + list(new_bins[:,1]))
+    
+    if plot:
+        plt.figure(dpi = 300)
+        plt.hist(sample, bins = b, histtype='step', color = 'red', label='Original')
+        plt.stairs(new_counts, new_edges, fill=True, color = 'blue', label='Merged')
+        plt.title('Absolute Frequency')
+        plt.legend(loc='upper right')
+        
+    if c_log:
+        print(f"\nMinimum bin size: {th:d}\n")
+        print(f"Original numerosity per bin\n{counts}\n")
+        print(f"Merged numerosity per bin\n{new_counts}\n")
+        
+    return new_counts, new_bins
+
+
+def chi2_test(new_counts, new_bins, rand_var, signif=5, est_params=True):
+    
+    # chi^2 from data -- compute theoretical frequencies for all bins
+    th = new_counts.sum()*np.array([rand_var.cdf(k[1]) - rand_var.cdf(k[0]) for k in new_bins])
+    data_chi_2 = (((new_counts - th)**2)/th).sum()
+    
+    # specify wheter the parameters were estimated from the data
+    if est_params:
+        # get the number of parameters that can be estimated
+        n_est_params = len(rand_var.kwds.keys())
+    else:
+        n_est_params = 0
+
+    # chi^2 from theory
+    # est_params parameters were estimated so dofs has to be decreased by est_params
+    dof = new_bins.shape[0] - 1 - n_est_params
+    confidence = (100-signif)/100
+    fun_chi_2 = chi2.ppf([confidence], dof)[0]
+    
+    # logging
+    print('*********************************')
+    print(f"Number of samples {new_counts.sum():d}")
+    print(f"Number of bins {len(new_bins):d}")
+    print(f"Number of DoFs {dof:d}")
+    print(f"Number of estimated parameters {n_est_params:d}")
+    print(f"Chi2 from data = {data_chi_2:.2f}")
+    print(f"Chi2 from function = {fun_chi_2:.2f}")
+    # chi2 test
+    if data_chi_2 < fun_chi_2:
+        print("Chi2 test passed (data < fun)")
+    else:
+        print("Chi2 test failed (data >= fun)")
+    print('*********************************')
+    
 if __name__ == '__main__':
+    # family of the distribution
+    f = 'norm'
+    
     # numeber of bins
     b = 50
     
     # sample size
     ss = 5000
     
-    x = norm(loc = 0, scale = 1).rvs(size = ss)
-    plt.figure()
-    plt.hist(x, bins = b, histtype='step', color = 'red')
-
+    # build the ``referece'' random variable
+    rv = build_rv(mu=0, std=1, family=f)
+    
+    # sample
+    x = generate_sample(rv, size = ss, n_bins=b, plot=False)
+    
+    # merge bins and recompute histogram
+    merged_counts, merged_bins = recompute_histogram(x, n_bins=b, th=5, plot=False)
+    
+    # do chi^2 test
+    chi2_test(merged_counts, merged_bins, rv, 10, est_params=False)
+    
+""" UNMODULARISED VERSION
     # take the histogram of x
     counts, x_bins = np.histogram(x, bins=b)
     
@@ -132,7 +253,7 @@ if __name__ == '__main__':
     dx_counts = counts[id_max:None]
     
     # merge bins and find a new histogram by threshold th
-    th = 10
+    th = 5
     
     # on the left
     sx_new_counts, sx_new_bins = merge_bins(sx_counts, sx_bins, th = th)
@@ -140,8 +261,8 @@ if __name__ == '__main__':
     dx_new_counts, dx_new_bins = merge_bins(dx_counts, dx_bins, th = th, flip = True)
     
     # join new counts and bins
-    new_counts = np.concatenate([sx_new_counts, dx_new_counts])
-    new_bins = np.concatenate([sx_new_bins, dx_new_bins])
+    new_counts = cat_sx_dx(sx_new_counts, dx_new_counts)
+    new_bins = cat_sx_dx(sx_new_bins, dx_new_bins)
     
     # in order to plot take the edges of the distribution
     new_edges = np.array([new_bins[0,0]] + list(new_bins[:,1]))
@@ -151,15 +272,22 @@ if __name__ == '__main__':
     plt.figure(dpi = 300)
     plt.hist(x, bins = b, histtype='step', color = 'red', density=True)
     x_coord = np.linspace(x_bins.min(), x_bins.max(), 1000)
-    plt.plot(x_coord, norm(loc = 0, scale = 1).pdf(x_coord), c='k')
+    plt.plot(x_coord, rv.pdf(x_coord), c='k')
+    
+    plt.figure(dpi = 300)
+    plt.hist(x, bins = b, histtype='step', color = 'red', label='Original')
+    plt.stairs(new_counts, new_edges, fill=True, color = 'blue', label='Merged')
+    plt.title('Absolute Frequency')
     
     # logging 
     print(counts)
     print(new_counts)
     print()
     
+    print(f"Number of samples {ss:d}")
     # chi^2 from data
-    data_chi_2 = compute_chi2(new_bins, new_counts)
+    # data_chi_2 = compute_chi2(new_bins, new_counts)
+    data_chi_2 = compute_chi2(new_bins, new_counts, rv)
     print(f"Chi2 from data = {data_chi_2:.2f}")
     
     # chi^2 from the definition of chi^2
@@ -172,9 +300,7 @@ if __name__ == '__main__':
         print("Chi2 test passed (data < fun)")
     else:
         print("Chi2 test failed (data >= fun)")
-    
-    
-
+"""
 
 """
 new_counts = []
