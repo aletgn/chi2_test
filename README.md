@@ -14,7 +14,7 @@ so that each bins is characterised by an _observed numerosity_ $\mathcal{O}_{i}$
 
 $$ \mathcal{E}_i = N\cdot \mathbb{P}[X\in\mathcal{X}_i]$$
 
-As widely employed for this kind of test, we adopt the following _test statistic_:
+As the best practice suggests, should the i-th class have $\mathcal{O}_i < 5$, such a class should be merged with its left or right neighbours. If this adjustment is not done, the denominator of $U$ might become far too high for the i-th class, thus eventually leading to huge, yet unjustified values of $U$. As widely employed for this kind of test, we adopt the following _test statistic_:
 
 $$ U = \sum_{i  = 1}^{k}\frac{(\mathcal{O}_i - \mathcal{E}_i)^2}{\mathcal{E}_i} $$
 
@@ -28,4 +28,3 @@ In order to accomplish the test we need to set a significatity level thereof: $\
 
 $$\begin{cases} U <  \chi^2_{1-\alpha, l}\ \text{do not reject}\ H_0\\
 U > \chi^2_{1-\alpha, l}\ \text{reject}\ H_0\end{cases} $$
-
