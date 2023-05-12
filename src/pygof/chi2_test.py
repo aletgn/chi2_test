@@ -2,7 +2,7 @@
 """
 Created on Fri Apr 28 09:07:55 2023
 
-@author: AT
+@author: aletgn
 """
 import numpy as np; np.random.seed(1)
 import matplotlib.pyplot as plt
@@ -301,7 +301,7 @@ def recompute_histogram(sample, n_bins = 10, th = 5, plot=True, c_log=True):
     return new_counts, new_bins
 
 
-def chi2_test(new_counts, new_bins, rand_var, signif=5, est_params=True):
+def do_chi2_test(new_counts, new_bins, rand_var, signif=5, est_params=True):
     """
     This function computes the experimental and theoretical value of chi2. See
     README.md for further mathematical details.
@@ -358,25 +358,3 @@ def chi2_test(new_counts, new_bins, rand_var, signif=5, est_params=True):
     else:
         print("Chi2 test failed (data >= fun)")
     print('*********************************')
-    
-if __name__ == '__main__':
-    # family of the distribution
-    f = 'norm'
-    
-    # numeber of bins
-    b = 50
-    
-    # sample size
-    ss = 5000
-    
-    # build the ``referece'' random variable
-    rv = build_rv(mu=0, std=1, family=f)
-    
-    # sample
-    x = generate_sample(rv, size = ss, n_bins=b, plot=False)
-    
-    # merge bins and recompute histogram
-    merged_counts, merged_bins = recompute_histogram(x, n_bins=b, th=5, plot=False)
-    
-    # do chi^2 test
-    chi2_test(merged_counts, merged_bins, rv, 10, est_params=False)
