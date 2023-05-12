@@ -1,7 +1,7 @@
 # A simple Python Module for $\chi^2$ Goodness-of-fit test
 
 ## Disclamier
-This module should preferrably be used to test _unimodal distrbutions_. The module currently implements:
+This module should preferably be used to test unimodal distributions. The module currently implements the following:
 
 - Normal Distribution
 - Lognormal Distribution
