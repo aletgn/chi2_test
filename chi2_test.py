@@ -12,6 +12,36 @@ from scipy.stats import chi2
 
 
 def unravel_bins(bins):
+    """
+    
+
+    Parameters
+    ----------
+    bins : numpy array
+        bins obtained by the application of np.histogram to the original sample
+        bins has this configuration:
+            
+            edge_0 edge_1 edge_2 edge_3 ... edge_N
+            
+        this function gives:
+            edge_0 edge_1
+            
+            edge_1 edge_2
+            
+            edge_2 edge_3
+            
+            ...
+            
+            edge_N-1 edge_N
+            
+            
+
+    Returns
+    -------
+    numpy array
+        see the transformation above.
+
+    """
     u_bins = []
     
     for b in range(0, len(bins)-1):
@@ -99,6 +129,34 @@ def my_chi2(signif, bins, est_params = 0):
 
 
 def build_rv(mu = 0, std = 1, s_log = 1, family = 'norm'):
+    """
+    This function allows one to create a random variable according to the
+    desired distribution to be testes
+
+    Parameters
+    ----------
+    mu : FLOAT, optional
+        The mean of the normal distribution. The mean used to standardise the
+        variable when using a lognormal. The default is 0.
+    std : FLOAT, optional
+        The std of the normal distribution. The std used to standardise the
+        variable when using a lognormal. The default is 1.
+    s_log : FLOAT, optional
+        The scale of the lognormal distribution. The default is 1.
+    family : STR
+        Label for selecting the kind of distribution to be tested.
+        The default is 'norm'.
+
+    Raises
+    ------
+    NotImplementedError
+        Raised when the selected distribution is wrong or does not exist.
+
+    Returns
+    -------
+    scipy random variable
+
+    """
     if family == 'norm':
         return norm(loc = mu, scale = std)
     elif family == 'lognorm':
