@@ -207,15 +207,15 @@ def generate_sample(rv, size = 1000, n_bins = 10, plot = False):
     """
     
     # sample the random variable
-    x = rv.rvs(size = ss)
+    x = rv.rvs(size = size)
     
     if plot:
         plt.figure(dpi = 300)
-        plt.hist(x, bins = b, histtype='step', color = 'red')
+        plt.hist(x, bins = n_bins, histtype='step', color = 'red')
         plt.title('Absolute Frequency')
         
         plt.figure(dpi = 300)
-        plt.hist(x, bins = b, histtype='step', color = 'red', density=True)
+        plt.hist(x, bins = n_bins, histtype='step', color = 'red', density=True)
         x_coord = np.linspace(x.min(), x.max(), 1000)
         plt.plot(x_coord, rv.pdf(x_coord), 'k')
         plt.title('Relative Frequency')
@@ -288,7 +288,7 @@ def recompute_histogram(sample, n_bins = 10, th = 5, plot=True, c_log=True):
     
     if plot:
         plt.figure(dpi = 300)
-        plt.hist(sample, bins = b, histtype='step', color = 'red', label='Original')
+        plt.hist(sample, bins = n_bins, histtype='step', color = 'red', label='Original')
         plt.stairs(new_counts, new_edges, fill=True, color = 'blue', label='Merged')
         plt.title('Absolute Frequency')
         plt.legend(loc='upper right')
