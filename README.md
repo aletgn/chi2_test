@@ -1,5 +1,11 @@
 # A simple Python Module for $\chi^2$ Goodness-of-fit test
 
+## Disclamier
+This module should preferrably be used to test _unimodal distrbutions_. The module currently implements:
+
+- Normal Distribution
+- Lognormal Distribution
+
 ## Theoretical Primer
 Let $X$ be a scalar random variable. Upon an adequate number of tests $n$ we wish to ascertain wether X follows a certain underlying distribution we hypothesise, $\mathcal{D}$. Upon an adquated number of samples, $N$, we wish to ascertain whether $X$ follows a distribution we hypothesise _a priori_. Generally, this is accomplished by setting out the so called $\chi^2$, or _goodness-of-fit_ test. Let us formalise the structure of such test:
 
