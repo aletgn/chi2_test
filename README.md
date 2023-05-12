@@ -34,3 +34,7 @@ In order to accomplish the test we need to set a significatity level thereof: $\
 
 $$\begin{cases} U <  \chi^2_{1-\alpha, l}\ \text{do not reject}\ H_0\\
 U > \chi^2_{1-\alpha, l}\ \text{reject}\ H_0\end{cases} $$
+
+
+## Examples
+`test` is meant to collect working examples, both `.py` and `ipynb`. Thus, `jupyter notebook` or `jupyter lab` is recommended.
