@@ -51,6 +51,29 @@ def unravel_bins(bins):
 
 
 def merge_bins(counts, bins, th = 5, flip = False):
+    """
+    
+
+    Parameters
+    ----------
+    counts : np array
+        Array of the observed frequency obtained by np.histogram 
+    bins : np array
+        Array of the observed frequency obtained by np.histogram having
+        the structure given by unravel bins
+    th : INT
+        Minimum number of samples per bin. The default is 5.
+    flip : BOOL
+        Flag to indicate whether the processed array is on the left of the mode
+        of the sample histogram. The default is False (left). True means ``on
+        the right''.
+
+    Returns
+    -------
+    np array
+        array of merged bins whose minumum number of sample is => 5.
+
+    """
     # flip vector if necessary
     if flip:
         counts = np.flip(counts)
@@ -177,6 +200,26 @@ def cat_sx_dx(sx, dx):
 
 
 def generate_sample(rv, size = 1000, n_bins = 10, plot = False):
+    """
+    
+
+    Parameters
+    ----------
+    rv : scipy random variable
+        Generated via build_rv.
+    size : INT
+        The size of the sample. The default is 1000.
+    n_bins : INT
+        The number of bins. The default is 10.
+    plot : BOOL
+        Selector to decide whether display the sample. The default is False.
+
+    Returns
+    -------
+    x : np array
+        Sample.
+
+    """
     
     # sample the random variable
     x = rv.rvs(size = ss)
@@ -195,6 +238,33 @@ def generate_sample(rv, size = 1000, n_bins = 10, plot = False):
 
 
 def recompute_histogram(sample, n_bins = 10, th = 5, plot=True, c_log=True):
+    """
+    This is an interface for processing the histogram of the given sample. This
+    function recalls all the others to compute a full histogram whose bins have
+    no less than th samples per bin
+
+    Parameters
+    ----------
+    sample : np array
+        DESCRIPTION.
+    n_bins : INT
+        Number of bins to generate. The default is 10.
+    th : INT
+        minumum number of bins per sample. The default is 5.
+    plot : BOOL
+        selector to decide whether display the histogram. The default is True.
+    c_log : BOOL
+        selector to decide whether log the original and merged numerosity.
+        The default is True.
+
+    Returns
+    -------
+    new_counts : TYPE
+        DESCRIPTION.
+    new_bins : TYPE
+        DESCRIPTION.
+
+    """
     
     # original histogram of the sample
     counts, x_bins = np.histogram(sample, bins=n_bins)
