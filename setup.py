@@ -25,5 +25,6 @@ setup(
     
     python_requires=">=3.6",
     install_requires=["numpy", "scipy", "matplotlib"],
-    extras_require={"test" : ["notebook"]}
+    extras_require={"test" : ["notebook"],
+                    "dev" : ["pytest", "twine"]}
 )
