@@ -22,7 +22,7 @@ It is widely known that, under $H_0$, $U\sim \chi^2_l$ where $l$ is the number o
 
 $$ l = N - 1 - P$$
 
-where $P$ is the number of parameters _estimated from the sample_. In case of we do not estimate any parameter, then $P=0$. For instance, if $\mathcal{D}$ is hypothesised as a Normal distribution whose mean and variance are estimated from the given sample, then $P = 2$.
+where $P$ is the number of parameters _estimated from the sample_. If we do not estimate any parameter, then $P=0$. For instance, if $\mathcal{D}$ is hypothesised as a Normal distribution whose mean and variance are estimated from the given sample, then $P = 2$.
 
 In order to accomplish the test we need to set a significatity level thereof: $\alpha$. Next, we computed the $1-\alpha$ quartile of a $\chi^2$ distribution having $l$ degrees of freedom, namely $\chi^2_{1-\alpha, l}$. Finally, the last check:
 
