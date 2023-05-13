@@ -1,4 +1,4 @@
-# A simple Python Module for $\chi^2$ Goodness-of-fit test
+# A Simple Python Module for $\chi^2$ Goodness-of-fit Test
 
 ## Disclamier
 This module should preferably be used to test unimodal distributions. The module currently implements the following:
