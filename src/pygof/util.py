@@ -68,3 +68,4 @@ def inspect_sample(sample: np.ndarray = None, n_bins: int = 50,
         plt.title('Absolute Frequency')
     
     plt.legend()
+    plt.show()

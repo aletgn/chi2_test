@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="pygof",
-    version="0.0.0",
+    version="0.5.0",
     description="A simple Python Module for Goodness-of-fit test",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -15,7 +15,7 @@ setup(
     
     author="aletgn",
     author_email="not_provided",
-    url="https://github.com/aletgn/chi2_test",
+    url="https://github.com/aletgn/pygof",
     
     classifiers=[
         "Programming Language :: Python :: 3",
