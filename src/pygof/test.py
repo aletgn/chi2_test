@@ -44,16 +44,17 @@ def chi2test(new_counts: np.ndarray, new_bins: np.ndarray, rand_var: callable,
     confidence = (100-signif)/100
     fun_chi_2 = chi2.ppf([confidence], dof)[0]
     
-    print('************************************************************')
-    print(f"Number of samples: {new_counts.sum():,.0f}")
+    print('------------------------------------------------------------')
+    print(f"Number of samples: {new_counts.sum():.0f}")
     print(f"Number of bins: {len(new_bins):,.0f}")
     print(f"Number of Degrees of Freedom (DoFs): {dof:,.0f}")
     print(f"Number of Estimated Parameters: {n_est_params:,.0f}")
+    print(f"Significativity = {signif:.2f}%")
     print(f"Chi2 from data = {data_chi_2:.2f}")
     print(f"Chi2 from function = {fun_chi_2:.2f}")
     # chi2 test
     if data_chi_2 < fun_chi_2:
-        print("Chi2 test passed (data < function)")
+        print("Chi2 test PASSED (data < function)")
     else:
-        print("Chi2 test failed (data >= function)")
-    print('************************************************************')
+        print("Chi2 test FAILED (data >= function)")
+    print('------------------------------------------------------------')

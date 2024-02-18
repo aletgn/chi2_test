@@ -182,13 +182,11 @@ def re_bin(sample: np.ndarray, n_bins: int = 10, th: int = 5) -> Tuple[np.ndarra
     new_counts = cat_sx_dx(sx_new_counts, dx_new_counts)
     new_edges = cat_sx_dx(sx_new_edges, dx_new_edges)
     
-    # # in order to plot take the edges of the distribution
-    # new_edges_ = np.array([new_edges[0,0]] + list(new_edges[:,1]))
-    
-    print(new_edges)
+    # in order to plot take the edges of the distribution
+    new_edges_plot = np.array([new_edges[0,0]] + list(new_edges[:,1]))
     
     print(f"\nMinimum bin size: {th:d}\n")
     print(f"Original numerosity per bin\n{counts}\n")
     print(f"Merged numerosity per bin\n{new_counts}\n")
 
-    return new_counts, new_edges
+    return new_counts, new_edges, new_edges_plot

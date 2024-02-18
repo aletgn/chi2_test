@@ -18,6 +18,10 @@ sample_size = 5000
 rv = random_variable(norm, loc=0, scale=1)
 sample = rv.rvs(size = sample_size)
 
-inspect_sample(sample, n_bins=num_bins, rv=rv, density=True)
-merged_counts, merged_edges = re_bin(sample, n_bins=num_bins, th=5)
+# inspect_sample(sample, n_bins=num_bins, rv=rv, density=True)
+
+merged_counts, merged_edges, merged_edges_plot = re_bin(sample, n_bins=num_bins, th=5)
+
 chi2test(merged_counts, merged_edges, rv, 10, est_params=True)
+
+inspect_sample(sample, n_bins=num_bins, density=False, new_counts=merged_counts, new_edges=merged_edges_plot)
