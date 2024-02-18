@@ -1,22 +1,23 @@
 import sys
 sys.path.append("../src/")
                 
-from pygof.chi2_test import build_rv, generate_sample, recompute_histogram, do_chi2_test
+from pygof.test import chi2test
+from pygof.binning import re_bin
+from pygof.util import random_variable, inspect_sample
 
-# numeber of bins
-num_samples = 50
+from scipy.stats import norm
+
+import numpy as np
+np.random.seed(1)
+num_bins = 50
 
 # sample size
 sample_size = 5000
 
 # build the ``reference'' random variable
-rv = build_rv(mu=0, std=1, family='norm')
+rv = random_variable(norm, loc=0, scale=1)
+sample = rv.rvs(size = sample_size)
 
-# sample
-x = generate_sample(rv, size = sample_size, n_bins=num_samples, plot=True)
-
-# merge bins and recompute histogram
-merged_counts, merged_bins = recompute_histogram(x, n_bins=num_samples, th=5, plot=True)
-
-# do chi^2 test
-do_chi2_test(merged_counts, merged_bins, rv, 10, est_params=True)
+inspect_sample(sample, n_bins=num_bins, rv=rv, density=True)
+merged_counts, merged_edges = re_bin(sample, n_bins=num_bins, th=5)
+chi2test(merged_counts, merged_edges, rv, 10, est_params=True)
